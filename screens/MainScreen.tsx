@@ -11,19 +11,13 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  DataObjType,
+  PhotoType,
   getPhotosList,
-  PhotosState,
-  SetPhotosListActionType,
-} from '../redux/mainReducer';
-import { AppStateType } from '../redux/reduxStore';
-import { ThunkDispatch } from 'redux-thunk';
-
-type AppDispatch = ThunkDispatch<
-  AppStateType,
-  unknown,
-  SetPhotosListActionType
->;
+  InitialState,
+  AppDispatch,
+} from '../redux/RTK';
+import { AppStateType } from '../redux/RTK';
+import Spinner from '../components/Spinner';
 
 const MainScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,10 +29,10 @@ const MainScreen: React.FC = () => {
   const handleEndReached = () => {
     setPage(page + 1);
   };
-  const { photosList } = useSelector<AppStateType, PhotosState>(
-    (state) => state.mainState,
+  const { photosList, loading } = useSelector<AppStateType, InitialState>(
+    (state) => state,
   );
-  const renderItem = ({ item }: { item: DataObjType }) => {
+  const renderItem = ({ item }: { item: PhotoType }) => {
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -61,6 +55,7 @@ const MainScreen: React.FC = () => {
 
   return (
     <SafeAreaView>
+      {loading ? <Spinner /> : null}
       <FlatList
         data={photosList}
         renderItem={renderItem}
